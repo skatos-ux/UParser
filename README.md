@@ -30,5 +30,6 @@ python ./XML_uparser.py -p 12 -m 200 -c 200 <author> dblp.xml
 Parsing takes approximately between 10 and 40 seconds to parse ~3Go
 
 ```bash
-python ./XML_uparser.py '<author>' 'dblp.xml'
+python ./XML_uparser.py -p 12 -m 200 -c 200 <author> dblp.xml
+python ./XML_uparser.py <author> dblp.xml
 ```
