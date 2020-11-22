@@ -1,10 +1,11 @@
-import math
 import os
+import math
 import timeit
+import argparse
 import multiprocessing as mp
 
 
-def process_wrapper(chunkStart, chunkSize, limitWrite, file_index, tag, tag_len, ):
+def process_wrapper(chunkStart, chunkSize, limitWrite, file_index, tag, tag_len):
     with open("dblp.xml", 'r') as f:
         with open(f"splits/dblp_parsed{file_index}.xml", "w+") as fo:
             block = ''
@@ -40,23 +41,38 @@ def chunkify(filein, size=1024 * 1024):
 
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='UParser is an XML large file parser written in python 3.7')
+    parser.add_argument('-p', dest='cores', action='store', default=12, type=int,
+                        help='maximum number of processes running at the same time (default: 12)')
+    parser.add_argument('-m', dest='writeLimit', action='store', default=200, type=int,
+                        help='maximum number of lines each process can write at a time (default: 200)')
+    parser.add_argument('-n', dest='outFileNb', action='store', default=200, type=int,
+                        help='maximum number of output files (default: 200)')
+    parser.add_argument('tag', action='store', type=str,
+                        help='tag to retrieve')
+    parser.add_argument('inputFile', action='store', type=str,
+                        help='input filename')
+
+    args = parser.parse_args()
+
     start = timeit.default_timer()
 
     # mp objects
-    pool = mp.Pool(12)
+    pool = mp.Pool(args.cores)
     jobs = []
 
     # filein-related
-    filein = "dblp.xml"
-    tag = '<title>'
+    filein = args.inputFile
+    tag = args.tag
     tag_len = len(tag)
 
     # fileout-related
     file_index = 0
 
     # parameters
-    limit = 200
-    fileNb = 200
+    limit = args.writeLimit
+    fileNb = args.outFileNb
     chunk = math.ceil(os.path.getsize(filein) / fileNb)
 
     # create jobs
