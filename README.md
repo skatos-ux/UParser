@@ -1,5 +1,15 @@
 ## Description :pushpin:
 UParser is an XML large file parser written in python 3.7
+
+<img src="https://img.shields.io/badge/stability-stable-success"
+     alt="stability badge"
+     style="float: left; margin-right: 10px;" 
+/>
+<img src="https://img.shields.io/badge/unitary--tests-work--in--progress-lightgrey"
+     alt="unitary-tests badge"
+     style="float: left; margin-right: 10px;" 
+/>
+
 ## Usage :zap:
 ```bash
 python ./XML_uparser.py [-p ProcessesNb] [-m WriteLimit] [-n OutFileNb] outDir tag inputFile
