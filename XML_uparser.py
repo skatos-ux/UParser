@@ -5,9 +5,9 @@ import argparse
 import multiprocessing as mp
 
 
-def process_wrapper(chunkStart, chunkSize, limitWrite, file_index, tag, tag_len):
+def process_wrapper(chunkStart, chunkSize, limitWrite, outdir, file_index, tag, tag_len):
     with open("dblp.xml", 'r') as f:
-        with open(f"splits/dblp_parsed{file_index}.xml", "w+") as fo:
+        with open(f"{outdir}/dblp_parsed{file_index}.xml", "w+") as fo:
             block = ''
             f.seek(chunkStart)
             lines = f.read(chunkSize).splitlines()
@@ -42,6 +42,7 @@ def chunkify(filein, size=1024 * 1024):
 
 if __name__ == '__main__':
 
+    # menu
     parser = argparse.ArgumentParser(description='UParser is an XML large file parser written in python 3.7')
     parser.add_argument('-p', dest='cores', action='store', default=12, type=int,
                         help='maximum number of processes running at the same time (default: 12)')
@@ -49,11 +50,12 @@ if __name__ == '__main__':
                         help='maximum number of lines each process can write at a time (default: 200)')
     parser.add_argument('-n', dest='outFileNb', action='store', default=200, type=int,
                         help='maximum number of output files (default: 200)')
+    parser.add_argument('outDir', action='store', type=str,
+                        help='output directory')
     parser.add_argument('tag', action='store', type=str,
                         help='tag to retrieve')
     parser.add_argument('inputFile', action='store', type=str,
                         help='input filename')
-
     args = parser.parse_args()
 
     start = timeit.default_timer()
@@ -75,9 +77,14 @@ if __name__ == '__main__':
     fileNb = args.outFileNb
     chunk = math.ceil(os.path.getsize(filein) / fileNb)
 
+    # creating outdir
+    if not os.path.exists(args.outDir):
+        os.mkdir(args.outDir)
+    outdir = args.outDir
+
     # create jobs
     for chunkStart, chunkSize in chunkify(filein, chunk):
-        jobs.append(pool.apply_async(process_wrapper, (chunkStart, chunkSize, limit, file_index, tag, tag_len)))
+        jobs.append(pool.apply_async(process_wrapper, (chunkStart, chunkSize, limit, outdir, file_index, tag, tag_len)))
         file_index += 1
 
     # wait for all jobs to finish
