@@ -17,10 +17,10 @@ def process_wrapper(chunkStart, chunkSize, limitWrite, outdir, file_index, tag, 
                     block += f'{line}\n'
                     line_index += 1
                 if line_index == limitWrite:
-                    fo.write('{:s}\n'.format(block))
+                    fo.write('{:s}'.format(block))
                     line_index = 0
                     block = ''
-            fo.write('{:s}\n'.format(block))  # write last block
+            fo.write('{:s}'.format(block))  # write last block
             fo.close()
     f.close()
 
